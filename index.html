@@ -159,7 +159,7 @@ new Chart(document.getElementById('poFuncChart'),{type:'bar',data:{labels:['SUPP
            xL:{position:'top',ticks:{color:'#0F6E56',font:{size:9},callback:v=>v},grid:{display:false}}  }}});
 
 const psc=['#C0392B','#E07050','#E07050','#185FA5','#185FA5','#185FA5','#185FA5','#185FA5','#185FA5','#185FA5'];
-new Chart(document.getElementById('poSiteChart'),{type:'bar',data:{labels:['Engines','Sky Harbor RandO','ERDC','Tempe','ARDC','Torrance','Mexicali','Toronto','Rocky Mount','SARL'],datasets:[
+new Chart(document.getElementById('poSiteChart'),{type:'bar',data:{labels:['Engines','Sky Harbor','ERDC','Tempe','ARDC','Torrance','Mexicali','Toronto','Rocky Mount','SARL'],datasets:[
   {label:'PO Past Due $',data:[2.724,0.748,0.548,0.536,0.407,0.323,0.264,0.262,0.259,0.187],backgroundColor:psc,
     datalabels:{anchor:'end',align:'right',color:ctx=>psc[ctx.dataIndex],font:{size:9,weight:'500'},formatter:v=>'$'+Math.round(v*1000)+'K'}}
 ]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{}},
@@ -176,7 +176,7 @@ new Chart(document.getElementById('binFuncChart'),{type:'bar',data:{labels:['SUP
            xD:{position:'bottom',ticks:{color:'#4A3FBF',font:{size:9},callback:v=>'$'+v+'K'},grid:{color:gc}},
            xL:{position:'top',ticks:{color:'#0F6E56',font:{size:9},callback:v=>v},grid:{display:false}}  }}});
 
-new Chart(document.getElementById('binSiteChart'),{type:'bar',data:{labels:['Sky Harbor RandO','Tempe','Engines','Raunheim','Rocky Mount','Torrance','Mexicali','Hill AFB','Engines Kitting','Urbana'],datasets:[
+new Chart(document.getElementById('binSiteChart'),{type:'bar',data:{labels:['Sky Harbor','Tempe','Engines','Raunheim','Rocky Mount','Torrance','Mexicali','Hill AFB','Engines Kitting','Urbana'],datasets:[
   {label:'Lines',data:[497,318,235,235,125,115,112,110,90,86],backgroundColor:'rgba(186,117,23,0.78)',
     datalabels:{anchor:'end',align:'right',color:'#854F0B',font:{size:9,weight:'500'},formatter:v=>v+' lines'}}
 ]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{}},
