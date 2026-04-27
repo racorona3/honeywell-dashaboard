@@ -133,11 +133,17 @@ def compute(saw, hist):
 
     trend_rev  = to_js(h_cur_u["Revenue ($)"],       divisor=1e6)
     trend_pgm  = to_js(h_cur_u["PGM (%)"],           mult=100, decimals=1)
+    trend_pd_dollars = to_js(h_cur_u["Past Due Dollars ($)"], divisor=1e6)
+    trend_pd_lines   = [int(v) if pd.notna(v) else None for v in h_cur_u["Past Due Lines"]]
 
     brev_col = h_cur_u.get("Baseline Plan (Revenue)", pd.Series([None]*len(h_cur_u)))
     bpgm_col = h_cur_u.get("Baseline Plan PGM",       pd.Series([None]*len(h_cur_u)))
     trend_brev = to_js(brev_col, divisor=1e6)
     trend_bpgm = to_js(bpgm_col, mult=100, decimals=1)
+
+    # Pre-SAP deployment goals
+    goal_pd_dollars = 5350499
+    goal_pd_lines   = 2575
 
     # PO by function
     po_func = (po_pd.groupby("ActionBy - New")
@@ -183,6 +189,8 @@ def compute(saw, hist):
         bin_pd_lines=bin_pd_lines, bin_pd_dollars=bin_pd_dollars,
         trend_dates=trend_dates, trend_rev=trend_rev, trend_pgm=trend_pgm,
         trend_brev=trend_brev, trend_bpgm=trend_bpgm,
+        trend_pd_dollars=trend_pd_dollars, trend_pd_lines=trend_pd_lines,
+        goal_pd_dollars=goal_pd_dollars, goal_pd_lines=goal_pd_lines,
         po_func=po_func, po_site=po_site,
         bin_func=bin_func, bin_site=bin_site,
         top_func=top_func, top_func_l=top_func_l,
@@ -308,6 +316,30 @@ body{{font-family:Arial,sans-serif;background:#f5f5f2;padding:24px;color:#2C2C2A
 </div>
 
 <hr class="divider">
+<div class="sl">Past Due Trend &mdash; YTD {m['cur_year']} vs Pre-SAP Deployment Goals</div>
+<div class="kpi-grid">
+  <div class="kpi"><div class="kpi-label">Current Past Due $</div><div class="kpi-val r">{fmt_m(m['pd_dollars'])}</div><div class="kpi-sub dn">Jan {m['cur_year']} open: ${m['trend_pd_dollars'][0]}M &middot; {round((m['trend_pd_dollars'][0] - m['pd_dollars']/1e6) / m['trend_pd_dollars'][0] * 100, 1)}% reduction YTD</div></div>
+  <div class="kpi"><div class="kpi-label">Pre-SAP Goal $</div><div class="kpi-val a">{fmt_m(m['goal_pd_dollars'])}</div><div class="kpi-sub dn">{fmt_m(m['pd_dollars'] - m['goal_pd_dollars'])} gap remaining &middot; {round((m['pd_dollars'] - m['goal_pd_dollars']) / m['pd_dollars'] * 100, 1)}% to close</div></div>
+  <div class="kpi"><div class="kpi-label">Current Past Due Lines</div><div class="kpi-val r">{fmt_comma(m['pd_lines'])}</div><div class="kpi-sub dn">Jan {m['cur_year']} open: {fmt_comma(m['trend_pd_lines'][0])} lines &middot; {round((m['trend_pd_lines'][0] - m['pd_lines']) / m['trend_pd_lines'][0] * 100, 1)}% reduction YTD</div></div>
+  <div class="kpi"><div class="kpi-label">Pre-SAP Goal Lines</div><div class="kpi-val a">{fmt_comma(m['goal_pd_lines'])}</div><div class="kpi-sub dn">{fmt_comma(m['pd_lines'] - m['goal_pd_lines'])} lines gap remaining &middot; {round((m['pd_lines'] - m['goal_pd_lines']) / m['pd_lines'] * 100, 1)}% to close</div></div>
+</div>
+
+<div class="cg">
+  <div class="cb">
+    <div class="ct">Past Due Dollars &mdash; YTD {m['cur_year']} Trend</div>
+    <div class="cs">Weekly snapshots &middot; pre-SAP target = {fmt_m(m['goal_pd_dollars'])}</div>
+    <div class="leg"><span><span class="lsq" style="background:#C0392B"></span>Past due $</span><span><span class="lsq" style="background:#E8A020;border:1px dashed #BA7517"></span>Pre-SAP goal ({fmt_m(m['goal_pd_dollars'])})</span></div>
+    <div style="position:relative;width:100%;height:260px"><canvas id="pdDollarChart" role="img" aria-label="Past Due Dollars Trend"></canvas></div>
+  </div>
+  <div class="cb">
+    <div class="ct">Past Due Lines &mdash; YTD {m['cur_year']} Trend</div>
+    <div class="cs">Weekly snapshots &middot; pre-SAP target = {fmt_comma(m['goal_pd_lines'])} lines</div>
+    <div class="leg"><span><span class="lsq" style="background:#4A3FBF"></span>Past due lines</span><span><span class="lsq" style="background:#E8A020;border:1px dashed #BA7517"></span>Pre-SAP goal ({fmt_comma(m['goal_pd_lines'])})</span></div>
+    <div style="position:relative;width:100%;height:260px"><canvas id="pdLineChart" role="img" aria-label="Past Due Lines Trend"></canvas></div>
+  </div>
+</div>
+
+<hr class="divider">
 <div class="sl">Past Due Analysis &mdash; PO Orders (Planned Commitments)</div>
 <div class="kpi-grid">
   <div class="kpi"><div class="kpi-label">PO Past Due Lines</div><div class="kpi-val r">{fmt_comma(m['po_pd_lines'])}</div><div class="kpi-sub dn">of {fmt_comma(m['po_total_lines'])} total PO lines &middot; {po_pd_pct}%</div></div>
@@ -375,6 +407,26 @@ new Chart(document.getElementById('pgmChart'),{{type:'line',data:{{labels:{js_st
 ]}},options:{{responsive:true,maintainAspectRatio:false,plugins:{{legend:{{display:false}},datalabels:{{}}}},
   scales:{{x:{{ticks:{{color:tc,font:{{size:9}},maxRotation:45,autoSkip:true,maxTicksLimit:10}},grid:{{color:gc}}}},
            y:{{min:20,max:35,ticks:{{color:tc,font:{{size:10}},callback:v=>v+'%'}},grid:{{color:gc}}}}  }}}}}});
+
+new Chart(document.getElementById('pdDollarChart'),{{type:'line',data:{{labels:{js_str_arr(m['trend_dates'])},datasets:[
+  {{label:'Past Due $M',data:{js_arr(m['trend_pd_dollars'])},borderColor:'#C0392B',backgroundColor:'rgba(192,57,43,0.07)',fill:true,tension:0.3,pointRadius:2.5,borderWidth:2.5,
+    datalabels:{{display:ctx=>[0,{len(m['trend_pd_dollars'])-1}].includes(ctx.dataIndex),anchor:'top',align:'top',color:'#C0392B',font:{{size:10,weight:'500'}},formatter:v=>'$'+v+'M'}}}},
+  {{label:'Pre-SAP Goal',data:new Array({len(m['trend_dates'])}).fill({round(m['goal_pd_dollars']/1e6,3)}),borderColor:'#E8A020',borderDash:[6,4],tension:0,pointRadius:0,borderWidth:2,backgroundColor:'transparent',
+    datalabels:{{display:ctx=>ctx.dataIndex==={len(m['trend_dates'])-1},anchor:'bottom',align:'bottom',color:'#BA7517',font:{{size:10,weight:'500'}},formatter:()=>'Goal {fmt_m(m['goal_pd_dollars'])}'}}}}
+]}},options:{{responsive:true,maintainAspectRatio:false,interaction:{{mode:'index',intersect:false}},
+  plugins:{{legend:{{display:false}},datalabels:{{}},tooltip:{{callbacks:{{label:ctx=>ctx.dataset.label+': $'+ctx.raw+'M'}}}}}},
+  scales:{{x:{{ticks:{{color:tc,font:{{size:9}},maxRotation:45,autoSkip:true,maxTicksLimit:12}},grid:{{color:gc}}}},
+           y:{{min:0,ticks:{{color:tc,font:{{size:10}},callback:v=>'$'+v+'M'}},grid:{{color:gc}}}}  }}}}}});
+
+new Chart(document.getElementById('pdLineChart'),{{type:'line',data:{{labels:{js_str_arr(m['trend_dates'])},datasets:[
+  {{label:'Past Due Lines',data:{js_arr(m['trend_pd_lines'])},borderColor:'#4A3FBF',backgroundColor:'rgba(74,63,191,0.07)',fill:true,tension:0.3,pointRadius:2.5,borderWidth:2.5,
+    datalabels:{{display:ctx=>[0,{len(m['trend_pd_lines'])-1}].includes(ctx.dataIndex),anchor:'top',align:'top',color:'#4A3FBF',font:{{size:10,weight:'500'}},formatter:v=>v.toLocaleString()+' lines'}}}},
+  {{label:'Pre-SAP Goal',data:new Array({len(m['trend_dates'])}).fill({m['goal_pd_lines']}),borderColor:'#E8A020',borderDash:[6,4],tension:0,pointRadius:0,borderWidth:2,backgroundColor:'transparent',
+    datalabels:{{display:ctx=>ctx.dataIndex==={len(m['trend_dates'])-1},anchor:'bottom',align:'bottom',color:'#BA7517',font:{{size:10,weight:'500'}},formatter:()=>'Goal {fmt_comma(m['goal_pd_lines'])}'}}}}
+]}},options:{{responsive:true,maintainAspectRatio:false,interaction:{{mode:'index',intersect:false}},
+  plugins:{{legend:{{display:false}},datalabels:{{}},tooltip:{{callbacks:{{label:ctx=>ctx.dataset.label+': '+ctx.raw.toLocaleString()}}}}}},
+  scales:{{x:{{ticks:{{color:tc,font:{{size:9}},maxRotation:45,autoSkip:true,maxTicksLimit:12}},grid:{{color:gc}}}},
+           y:{{min:0,ticks:{{color:tc,font:{{size:10}},callback:v=>v.toLocaleString()}},grid:{{color:gc}}}}  }}}}}});
 
 new Chart(document.getElementById('poFuncChart'),{{type:'bar',data:{{labels:{po_func_labels},datasets:[
   {{label:'$',data:{po_func_d_vals},backgroundColor:'#4A3FBF',xAxisID:'xD',
