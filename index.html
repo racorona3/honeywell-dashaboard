@@ -38,6 +38,11 @@ body{font-family:Arial,sans-serif;background:#f5f5f2;padding:24px;color:#2C2C2A}
 .divider{border:none;border-top:1px solid #D3D1C7;margin:22px 0 6px}
 .fn{background:#EBF3FC;border-radius:8px;padding:12px 16px;font-size:12px;color:#0C447C;border:.5px solid #B5D4F4;margin-top:20px}
 .rt{font-size:11px;color:#888780;text-align:right;margin-top:14px}
+.disclosure{background:linear-gradient(135deg,#0a2a4a 0%,#0d3561 100%);border-top:2px solid #1a5080;padding:14px 24px;display:flex;gap:18px;align-items:flex-start;margin-top:24px;border-radius:0 0 8px 8px}
+.disc-icon{flex-shrink:0;width:28px;height:28px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;color:rgba(255,255,255,0.85);margin-top:1px}
+.disc-text{font-size:10.5px;font-weight:500;color:rgba(255,255,255,0.72);line-height:1.65;letter-spacing:0.01em}
+.disc-prop{font-weight:700;color:rgba(255,255,255,0.95);text-transform:uppercase;letter-spacing:0.06em;font-size:10px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:3px;padding:1px 5px;margin-right:5px;vertical-align:middle}
+.disc-divider{width:1px;background:rgba(255,255,255,0.18);align-self:stretch;flex-shrink:0;margin:0 4px}
 </style>
 </head>
 <body>
@@ -47,6 +52,10 @@ body{font-family:Arial,sans-serif;background:#f5f5f2;padding:24px;color:#2C2C2A}
   <div>
     <div class="hdr-title">Honeywell Global Program &mdash; Executive Dashboard</div>
     <div class="hdr-sub">YTD 2026 &middot; As of April 29, 2026</div>
+    <div style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.25);border-radius:4px;padding:4px 10px;">
+      <span style="font-size:12px;color:rgba(255,255,255,0.85);">&#128274;</span>
+      <span style="font-size:10px;font-weight:600;color:rgba(255,255,255,0.92);letter-spacing:0.1em;text-transform:uppercase;">For Internal Use Only</span>
+    </div>
   </div>
   <div class="hdr-badges">
     <div class="hdr-badge"><div class="hdr-badge-val">$54.6M</div><div class="hdr-badge-lbl">YTD Revenue</div></div>
@@ -149,6 +158,18 @@ body{font-family:Arial,sans-serif;background:#f5f5f2;padding:24px;color:#2C2C2A}
 
 <div class="fn"><strong>Note on Binstock:</strong> Binstock orders are ad-hoc scan-triggered replenishments under a 2-bin system, not planned commitments. Past due lines represent replenishment cycles that have not yet completed. A full bin map is needed to calculate true stockout rates by site. This analysis will be enhanced as that data becomes available.</div>
 <div class="rt">Last refreshed: April 29, 2026 &middot; Source: Working Honeywell KPI Dashboard.xlsx</div>
+
+<div class="disclosure">
+  <div class="disc-icon">&#9432;</div>
+  <div class="disc-text">
+    <span class="disc-prop">Proprietary</span>
+    The information contained herein is proprietary to The Boeing Company and shall not be reproduced or disclosed in whole or in part except when such user possesses direct written authorization from The Boeing Company.
+  </div>
+  <div class="disc-divider"></div>
+  <div class="disc-text">
+    The statements contained herein are based on good faith assumptions and are to be used for general information purposes only. These statements do not constitute an offer, promise, warranty or guarantee of performance.
+  </div>
+</div>
 
 </div>
 
